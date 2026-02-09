@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1770596079373,
+      "tag": "0000_normal_songbird",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1770596113704,
+      "tag": "0001_superb_leech",
+      "breakpoints": true
+    }
+  ]
+}
