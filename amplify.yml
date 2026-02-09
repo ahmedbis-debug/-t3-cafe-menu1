@@ -1,13 +1,23 @@
 version: 1
+env:
+  variables:
+    NODE_ENV: production
 frontend:
   phases:
     preBuild:
       commands:
+        - echo "Installing pnpm..."
         - npm install -g pnpm
+        - echo "Installing dependencies..."
         - pnpm install
     build:
       commands:
+        - echo "Building application..."
         - pnpm run build
+        - echo "Build complete!"
+    postBuild:
+      commands:
+        - echo "Post-build verification..."
   artifacts:
     baseDirectory: dist
     files:
@@ -15,8 +25,4 @@ frontend:
   cache:
     paths:
       - node_modules/**/*
-backend:
-  phases:
-    build:
-      commands:
-        - echo "Backend build complete"
+      - .pnpm-store/**/*
