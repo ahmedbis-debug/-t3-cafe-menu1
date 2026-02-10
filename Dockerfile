@@ -1,30 +1,47 @@
 # Dockerfile
 
-FROM node:20-alpine
+# Stage 1: Build
+FROM node:20-alpine AS builder
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
+
+# Copy package files
+COPY package.json .
+COPY pnpm-lock.yaml .
 
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy package.json and pnpm-lock.yaml
-COPY package.json pnpm-lock.yaml ./
-
 # Install dependencies
-RUN pnpm install --production
+RUN pnpm install
 
-# Copy the rest of the application files
+# Copy rest of the application code
 COPY . .
 
-# Build the project
+# Build the application
 RUN pnpm build
 
-# Expose the ports
-EXPOSE 5173 3000
 
-# Set environment to production
+# Stage 2: Run
+FROM node:20-alpine AS runtime
+
+# Set working directory
+WORKDIR /app
+
+# Copy only production dependencies and dist folder
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./
+
+# Install production dependencies
+RUN pnpm install --prod
+
+# Set environment variable
 ENV NODE_ENV=production
 
+# Expose ports
+EXPOSE 3000
+EXPOSE 5173
+
 # Start the application
-CMD ["pnpm", "start"]
+CMD [ "node", "dist/index.js" ]
